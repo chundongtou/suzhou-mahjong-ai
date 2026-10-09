@@ -1,0 +1,129 @@
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  background: linear-gradient(160deg, #1a4d2e 0%, #0d3b22 40%, #0a2c1a 100%);
+  color: #f0ead6;
+  min-height: 100vh;
+  padding: 12px 16px 40px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+header { display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
+.title-row { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+h1 { font-size: 24px; color: #ffd76e; text-shadow: 0 2px 4px rgba(0,0,0,.5); }
+h2 { font-size: 15px; color: #ffd76e; cursor: pointer; user-select: none; }
+.status { display:flex; align-items:center; gap:6px; font-size:13px; color:#cfe3cf; }
+.dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+.dot.on { background:#4ade80; box-shadow:0 0 8px #4ade80; }
+.dot.off { background:#f87171; box-shadow:0 0 8px #f87171; }
+.model-row { display:flex; gap:12px; align-items:center; font-size:13px; flex-wrap:wrap; }
+select, input[type=number], input[type=text] {
+  background:#0f3b24; color:#f0ead6; border:1px solid #3d7a52;
+  border-radius:6px; padding:4px 8px; font-size:13px;
+}
+.mini-btn, .big-btn {
+  background:#2e7d4f; color:#fff; border:none; border-radius:8px;
+  padding:8px 16px; font-size:14px; cursor:pointer; transition:all .15s;
+}
+.mini-btn { padding:4px 10px; font-size:12px; }
+.big-btn:hover { transform:translateY(-1px); filter:brightness(1.1); }
+.big-btn.main { background:linear-gradient(135deg,#f59e0b,#d97706); font-weight:bold; font-size:16px; padding:12px 28px; }
+.big-btn.gray { background:#4b5563; }
+.panel {
+  background: rgba(0,0,0,.25); border:1px solid rgba(255,215,110,.25);
+  border-radius:12px; padding:10px 14px; margin-bottom:10px;
+}
+.panel-body { margin-top:8px; }
+.rule-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:8px; }
+.rule-item { display:flex; flex-direction:column; gap:3px; font-size:13px; }
+.rule-opts { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.rule-opts label {
+  background:#123d26; border:1px solid #3d7a52; border-radius:16px;
+  padding:4px 12px; font-size:13px; cursor:pointer; display:flex; gap:4px; align-items:center;
+}
+.rule-opts input { accent-color:#f59e0b; }
+.rule-flowers { display:flex; flex-wrap:wrap; gap:14px; margin-top:8px; font-size:13px; align-items:center; }
+.rule-flowers input[type=number] { width:44px; }
+
+/* 牌桌 */
+.table-wrap { display:flex; flex-direction:column; gap:8px; }
+.player-zone {
+  background: rgba(0,0,0,.2); border-radius:10px; padding:8px 12px;
+  border-left:4px solid #3d7a52;
+}
+.zone-title { font-size:13px; color:#9ad9a9; margin-bottom:4px; }
+.self-zone .sub-title { font-size:13px; color:#9ad9a9; margin:4px 0; }
+.self-grid { display:flex; gap:20px; flex-wrap:wrap; }
+.self-col { min-width:280px; flex:1; }
+.count { color:#ffd76e; font-size:12px; }
+
+/* 麻将牌 */
+.tile {
+  display:inline-flex; flex-direction:column; align-items:center; justify-content:center;
+  width:44px; height:58px; margin:3px 2px;
+  background:linear-gradient(180deg,#fffdf5,#efe6cf);
+  border-radius:6px; border:1px solid #b8a97e;
+  box-shadow: 0 2px 3px rgba(0,0,0,.4);
+  font-weight:bold; font-size:19px; cursor:pointer; position:relative;
+  user-select:none; transition:transform .1s;
+}
+.tile:hover { transform:translateY(-3px); }
+.tile.wan { color:#c0392b; }
+.tile.tiao { color:#1e8449; }
+.tile.tong { color:#2471a3; }
+.tile.zi  { color:#2c2c2c; }
+.tile.hua { color:#b8860b; background:linear-gradient(180deg,#fffbe6,#f7e9b8); }
+.tile.small { width:30px; height:40px; font-size:13px; margin:2px 1px; }
+.tile.xs { width:24px; height:32px; font-size:11px; margin:1px; border-radius:4px; }
+.tile .tnum { font-size:10px; line-height:1; opacity:.85; }
+.tile.selected-target { outline:2px solid #ffd76e; }
+.discards { display:flex; flex-wrap:wrap; min-height:34px; padding:3px; border-radius:6px; }
+.discards:empty::before { content:"(暂无)"; color:#6f8f74; font-size:12px; }
+.melds { display:flex; flex-wrap:wrap; gap:3px; min-height:22px; }
+.melds:empty::before { content:""; }
+.meld-tile {
+  background:#123d26; border:1px solid #4b8a5f; color:#e8f5e9;
+  border-radius:4px; padding:2px 6px; font-size:12px; margin:2px 0;
+}
+.hint { color:#6f8f74; font-size:13px; }
+.hand-cards { display:flex; flex-wrap:wrap; min-height:64px; background:rgba(0,0,0,.15); border-radius:8px; padding:4px; }
+
+/* 选择器 */
+.target-switch, .meld-switch { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; align-items:center; font-size:13px; }
+.tbtn {
+  background:#1c4a30; color:#d9ead3; border:1px solid #3d7a52;
+  border-radius:14px; padding:5px 14px; cursor:pointer; font-size:13px;
+}
+.tbtn.active { background:#f59e0b; color:#3a2400; border-color:#f59e0b; font-weight:bold; }
+.tbtn.meld { background:#2c3e50; }
+.tbtn.meld.active { background:#3498db; color:#fff; }
+.target-hint { float:right; font-size:13px; color:#cfe3cf; font-weight:normal; }
+.tile-picker { display:flex; flex-wrap:wrap; gap:2px; }
+.action-row { display:flex; gap:12px; margin-top:12px; flex-wrap:wrap; }
+
+/* 结果 */
+.result-box {
+  background:#0e1f14; border-radius:10px; padding:16px;
+  font-size:14px; line-height:1.8; color:#e8f5e9;
+  white-space:pre-wrap; word-break:break-word;
+  max-height:560px; overflow-y:auto;
+}
+.result-box .mod-title { color:#ffd76e; font-weight:bold; font-size:15px; }
+#resultTime { font-size:12px; color:#9ad9a9; font-weight:normal; }
+
+/* 弹窗 */
+.modal { position:fixed; inset:0; background:rgba(0,0,0,.7); display:flex; align-items:center; justify-content:center; z-index:99; }
+.modal-box {
+  background:#14351f; border:1px solid #ffd76e; border-radius:14px;
+  padding:18px 22px; width:min(720px, 92vw); max-height:90vh; overflow-y:auto;
+}
+.modal-box h3 { color:#ffd76e; margin-bottom:6px; }
+.tip { font-size:13px; color:#9ad9a9; margin-bottom:10px; }
+.shot-preview { max-width:100%; max-height:46vh; border-radius:8px; border:1px solid #4b8a5f; margin-bottom:12px; }
+.modal-btns { display:flex; gap:10px; flex-wrap:wrap; }
+.ocr-status { margin-top:10px; font-size:13px; color:#ffd76e; white-space:pre-wrap; }
+
+@media (max-width: 640px) {
+  .tile { width:36px; height:48px; font-size:16px; }
+  h1 { font-size:20px; }
+}

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>苏州麻将AI军师</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="title-row">
+    <h1>🀄 苏州麻将AI军师</h1>
+    <div class="status">
+      <span id="ollamaDot" class="dot off"></span>
+      <span id="ollamaText">检测中...</span>
+    </div>
+  </div>
+  <div class="model-row">
+    <label>推理模型 <select id="modelText"></select></label>
+    <label>识别模型 <select id="modelVision"></select></label>
+    <button id="btnRefreshModels" class="mini-btn">刷新模型</button>
+  </div>
+</header>
+
+<section id="rulePanel" class="panel">
+  <h2 onclick="togglePanel('ruleBody')">⚙️ 本局规则 <span class="chev">▼</span></h2>
+  <div id="ruleBody" class="panel-body">
+    <div class="rule-grid">
+      <div class="rule-item">
+        <label>玩法</label>
+        <select id="ruleGame">
+          <option value="1">苏州麻将</option>
+          <option value="2">苏州百搭</option>
+        </select>
+      </div>
+      <div class="rule-item">
+        <label>胡法</label>
+        <select id="ruleHuFa">
+          <option value="3">3摸4冲</option>
+          <option value="2">2摸3冲</option>
+          <option value="1">1摸2冲</option>
+        </select>
+      </div>
+      <div class="rule-item">
+        <label>人数</label>
+        <select id="rulePlayers">
+          <option value="4">4人</option>
+          <option value="3">3人</option>
+          <option value="2">2人</option>
+        </select>
+      </div>
+      <div class="rule-item">
+        <label>我是庄家</label>
+        <input type="checkbox" id="ruleBanker" checked>
+      </div>
+      <div class="rule-item" id="fanpaiWrap" style="display:none">
+        <label>翻牌</label>
+        <select id="ruleFanPai">
+          <option value="6">6翻牌</option>
+          <option value="4">4翻牌</option>
+          <option value="2">2翻牌</option>
+          <option value="0">不翻牌</option>
+        </select>
+      </div>
+      <div class="rule-item">
+        <label>牌墙剩余</label>
+        <input type="number" id="ruleWall" value="40" min="0" max="100" style="width:60px">
+      </div>
+    </div>
+    <div class="rule-opts" id="ruleOpts"></div>
+    <div class="rule-flowers">
+      <label>我方花数 <input type="number" id="flowerSelf" value="0" min="0" max="9"></label>
+      <label>上家花 <input type="number" id="flowerUp" value="0" min="0" max="9"></label>
+      <label>对家花 <input type="number" id="flowerOpp" value="0" min="0" max="9"></label>
+      <label>下家花 <input type="number" id="flowerDown" value="0" min="0" max="9"></label>
+      <label class="wide">备注 <input type="text" id="ruleNote" placeholder="如:滴零牌已出/有人报听..." style="width:220px"></label>
+    </div>
+  </div>
+</section>
+
+<section class="table-wrap">
+  <div class="player-zone up" data-target="up">
+    <div class="zone-title">上家 (玩家A)</div>
+    <div class="discards" data-discard="up"></div>
+    <div class="melds" data-meld="up"></div>
+  </div>
+  <div class="player-zone opp" data-target="opp">
+    <div class="zone-title">对家 (玩家B)</div>
+    <div class="discards" data-discard="opp"></div>
+    <div class="melds" data-meld="opp"></div>
+  </div>
+  <div class="player-zone down" data-target="down">
+    <div class="zone-title">下家 (玩家C)</div>
+    <div class="discards" data-discard="down"></div>
+    <div class="melds" data-meld="down"></div>
+  </div>
+</section>
+
+<section class="panel self-zone">
+  <h2>🙋 我</h2>
+  <div class="self-grid">
+    <div class="self-col hand-col">
+      <div class="sub-title">手牌 <span class="count" id="handCount">0/14</span></div>
+      <div class="hand-cards" id="handCards"><span class="hint">点下方牌面加入手牌</span></div>
+    </div>
+    <div class="self-col">
+      <div class="sub-title">我已打</div>
+      <div class="discards" data-discard="self"></div>
+      <div class="sub-title">我的碰杠</div>
+      <div class="melds" data-meld="self"></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel picker-panel">
+  <h2>🎴 牌面选择器 <span class="target-hint">当前加入: <b id="targetLabel">手牌</b></span></h2>
+  <div class="target-switch" id="targetSwitch">
+    <button class="tbtn active" data-target="hand">手牌</button>
+    <button class="tbtn" data-target="self">我已打</button>
+    <button class="tbtn" data-target="up">上家已打</button>
+    <button class="tbtn" data-target="opp">对家已打</button>
+    <button class="tbtn" data-target="down">下家已打</button>
+  </div>
+  <div class="meld-switch" id="meldSwitch">
+    <span>碰/杠加入:</span>
+    <button class="tbtn meld active" data-target="meld-self">我的碰杠</button>
+    <button class="tbtn meld" data-target="meld-up">上家碰杠</button>
+    <button class="tbtn meld" data-target="meld-opp">对家碰杠</button>
+    <button class="tbtn meld" data-target="meld-down">下家碰杠</button>
+    <button class="tbtn meld" data-target="flower-self">我的花</button>
+  </div>
+  <div class="tile-picker" id="tilePicker"></div>
+  <div class="action-row">
+    <button id="btnScreenshot" class="big-btn">📷 截图识别牌局</button>
+    <button id="btnClear" class="big-btn gray">🧹 清空</button>
+    <button id="btnAnalyze" class="big-btn main">🧠 AI 分析决策</button>
+  </div>
+</section>
+
+<section class="panel result-panel" id="resultPanel" style="display:none">
+  <h2>📋 分析结果 <span id="resultTime"></span></h2>
+  <div id="resultBox" class="result-box"></div>
+  <div class="action-row">
+    <button id="btnCopy" class="big-btn gray">📋 复制结果</button>
+  </div>
+</section>
+
+<div id="shotModal" class="modal" style="display:none">
+  <div class="modal-box">
+    <h3>截图识别牌局</h3>
+    <p class="tip">粘贴截图 (Ctrl+V) 或选择图片文件</p>
+    <img id="shotPreview" class="shot-preview" alt="预览">
+    <div class="modal-btns">
+      <input type="file" id="shotFile" accept="image/*" hidden>
+      <button id="btnPickFile" class="big-btn gray">选择图片</button>
+      <button id="btnRunOcr" class="big-btn main">开始识别</button>
+      <button id="btnCloseModal" class="big-btn gray">取消</button>
+    </div>
+    <div id="ocrStatus" class="ocr-status"></div>
+  </div>
+</div>
+
+<script src="mahjong.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
